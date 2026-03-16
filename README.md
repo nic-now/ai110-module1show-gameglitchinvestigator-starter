@@ -25,14 +25,26 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [] Describe the game's purpose.
+
+  A number guessing game where the player tries to guess a secret number within a limited number of attempts. The difficulty setting adjusts the number range and attempt limit.
+
+- [] Detail which bugs you found.
+
+  - `parse_guess`: silently truncated floats (e.g. `"3.7"` → `3`) and didn't validate the input range
+  - `check_guess`: "Go Higher" and "Go Lower" hint messages were swapped
+  - `update_score`: win score formula had an off-by-one (`+1` double-penalty); "Too High" guesses incorrectly awarded +5 points on even attempts
+  - `app.py`: attempt counter initialized to 1 instead of 0; invalid inputs still consumed an attempt; new game button didn't reset `status`, `score`, or `history`
+
+- [] Explain what fixes you applied.
+
+  - `parse_guess`: floats now rejected with an error message; added 1–100 range validation
+  - `check_guess`: swapped the hint messages to the correct directions
+  - `update_score`: removed the extra `+1` from the win formula; "Too High" now always deducts 5 points like "Too Low"
+  - `app.py`: initialized attempts to 0; moved attempt increment after input validation; new game now fully resets all session state including `status`, `score`, and `history`
 
 ## 📸 Demo
 
 - [ ] [Insert a screenshot of your fixed, winning game here]
 
-## 🚀 Stretch Features
 
-- [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
