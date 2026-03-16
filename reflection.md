@@ -4,10 +4,10 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 ## 1. What was broken when you started?
 
-- What did the game look like the first time you ran it?
-- The game accepted numbers outside the given range (1-100) (negative or positive)
-- The game accepted floating numbers (counted 53.5 as 53)
-- New game button does not work
+- The game accepted numbers outside the given range (1-100) (negative or positive). Expectation is that user would be warned that an invalid number was given and give other opportunity (whilst not counting that towards allowed guesses), however, it would just accept those numbers as valid inputs. 
+- The game accepted floating numbers (counted 53.5 as 53). Similar as before, expectation is that user would be warned about invalid input, or clarification about accepting float number be given, but instead the number is accepted and rounded down.
+- New game button does not work. Expectation is that user should be able to start a new round after ending one, however, the button doesn't seem to work (the level doesn't matter)
+- Game's counter was off. The counter for allowed attempts is not updated appropiately and can confuse the user.
 
 ---
 
