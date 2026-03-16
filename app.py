@@ -12,7 +12,7 @@ def get_range_for_difficulty(difficulty: str):
 
 
 def parse_guess(raw: str, low: int = 1, high: int = 100):
-    #FIX: input validation (float, within range)
+    #FIX: input validation (float, within range) using Claude Extension
     if raw is None:
         return False, None, "Enter a guess."
 
@@ -96,9 +96,9 @@ st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
-# FIXME: Attempt counter starts at 1 
+# FIX: Attempt counter started at 1 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
