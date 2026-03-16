@@ -50,7 +50,7 @@ def check_guess(guess, secret):
 
     try:
         #FIX: Fixed hint bug, used Claude Code
-        
+
         # Bug fix: messages were swapped in original app.py.
         # guess > secret means the player guessed too high, so they need to go LOWER.
         # guess < secret means the player guessed too low, so they need to go HIGHER.
@@ -70,4 +70,24 @@ def check_guess(guess, secret):
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     """Update score based on outcome and attempt number."""
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    #FIX: Wrong guesses reduce points, win points increment bug with Claude Code
+    if outcome == "Win":
+        # Fix: removed the spurious +1 that double-penalized the win score.
+        # attempt_number is already incremented before this call, so using
+        # (attempt_number + 1) was deducting one extra tier of 10 points.
+        points = 100 - 10 * attempt_number
+        if points < 10:
+            points = 10
+        return current_score + points
+
+    if outcome == "Too High":
+        # Fix: wrong guesses must never award points.
+        # The previous branch awarded +5 on even attempt numbers, which was
+        # incorrect — "Too High" is a wrong guess and should deduct 5, same as
+        # "Too Low".
+        return current_score - 5
+
+    if outcome == "Too Low":
+        return current_score - 5
+
+    return current_score
