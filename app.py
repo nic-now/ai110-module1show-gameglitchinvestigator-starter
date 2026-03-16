@@ -12,6 +12,7 @@ def get_range_for_difficulty(difficulty: str):
 
 
 def parse_guess(raw: str, low: int = 1, high: int = 100):
+    #FIX: input validation (float, within range)
     if raw is None:
         return False, None, "Enter a guess."
 
@@ -152,6 +153,7 @@ if st.session_state.status != "playing":
 if submit:
     st.session_state.attempts += 1
 
+    #FIX: input validation (range)
     ok, guess_int, err = parse_guess(raw_guess, low, high)
 
     if not ok:
