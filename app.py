@@ -6,12 +6,14 @@ from logic_utils import check_guess, get_range_for_difficulty, parse_guess
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
+        #FIXME: attempt_number already incremented before this call; +1 double-penalizes win score
         points = 100 - 10 * (attempt_number + 1)
         if points < 10:
             points = 10
         return current_score + points
 
     if outcome == "Too High":
+        #FIXME: awards +5 points on even attempts for a wrong guess; should deduct like "Too Low"
         if attempt_number % 2 == 0:
             return current_score + 5
         return current_score - 5
