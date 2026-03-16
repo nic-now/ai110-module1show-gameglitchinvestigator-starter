@@ -1,19 +1,19 @@
-from logic_utils import check_guess, parse_guess
+from logic_utils import check_guess, parse_guess, update_score
 
 def test_winning_guess():
     # If the secret is 50 and guess is 50, it should be a win
-    result = check_guess(50, 50)
-    assert result == "Win"
+    outcome, _ = check_guess(50, 50)
+    assert outcome == "Win"
 
 def test_guess_too_high():
     # If secret is 50 and guess is 60, hint should be "Too High"
-    result = check_guess(60, 50)
-    assert result == "Too High"
+    outcome, _ = check_guess(60, 50)
+    assert outcome == "Too High"
 
 def test_guess_too_low():
     # If secret is 50 and guess is 40, hint should be "Too Low"
-    result = check_guess(40, 50)
-    assert result == "Too Low"
+    outcome, _ = check_guess(40, 50)
+    assert outcome == "Too Low"
 
 
 # --- parse_guess: float bug fix ---
@@ -55,3 +55,46 @@ def test_boundary_values_are_accepted():
     ok_high, val_high, _ = parse_guess("100")
     assert ok_low is True and val_low == 1
     assert ok_high is True and val_high == 100
+
+
+# --- check_guess: swapped hint message bug fix ---
+
+def test_too_high_hint_says_go_lower():
+    # Previously returned "Go HIGHER!" when guess was too high — messages were swapped
+    outcome, message = check_guess(60, 50)
+    assert outcome == "Too High"
+    assert message == "📉 Go LOWER!"
+
+def test_too_low_hint_says_go_higher():
+    # Previously returned "Go LOWER!" when guess was too low — messages were swapped
+    outcome, message = check_guess(40, 50)
+    assert outcome == "Too Low"
+    assert message == "📈 Go HIGHER!"
+
+
+# --- update_score: off-by-one win score bug fix ---
+
+def test_win_on_attempt_1_scores_90():
+    # Previously used (attempt_number + 1), so attempt 1 gave 100 - 10*2 = 80
+    # Fixed formula: 100 - 10 * 1 = 90
+    score = update_score(0, "Win", 1)
+    assert score == 90
+
+def test_win_on_attempt_5_scores_50():
+    # Sanity check: 100 - 10 * 5 = 50, floored at 10
+    score = update_score(0, "Win", 5)
+    assert score == 50
+
+
+# --- update_score: "Too High" awarding points bug fix ---
+
+def test_too_high_on_even_attempt_deducts_points():
+    # Previously awarded +5 on even attempts; now always deducts 5
+    score = update_score(50, "Too High", 2)
+    assert score == 45
+
+def test_too_high_and_too_low_deduct_equally():
+    # Both wrong-guess outcomes should behave the same
+    score_high = update_score(50, "Too High", 2)
+    score_low = update_score(50, "Too Low", 2)
+    assert score_high == score_low
