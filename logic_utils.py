@@ -9,7 +9,28 @@ def parse_guess(raw: str):
 
     Returns: (ok: bool, guess_int: int | None, error_message: str | None)
     """
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    if raw is None:
+        return False, None, "Enter a guess."
+
+    if raw == "":
+        return False, None, "Enter a guess."
+    #FIX: Refactored logic using Claude Agent mode
+    # Float fix: reject decimal input explicitly instead of silently truncating.
+    # Previously "3.7" would become 3; now it returns an error to the caller.
+    if "." in raw:
+        return False, None, "Enter a whole number."
+
+    try:
+        value = int(raw)
+    except Exception:
+        return False, None, "That is not a number."
+
+    # Range fix: validate that the parsed value falls within the valid game range.
+    # Values outside 1–100 are rejected with a descriptive message.
+    if value < 1 or value > 100:
+        return False, None, "Guess must be between 1 and 100."
+
+    return True, value, None
 
 
 def check_guess(guess, secret):

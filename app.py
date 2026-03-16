@@ -1,5 +1,6 @@
 import random
 import streamlit as st
+from logic_utils import parse_guess
 
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
@@ -10,27 +11,6 @@ def get_range_for_difficulty(difficulty: str):
         return 1, 50
     return 1, 100
 
-
-def parse_guess(raw: str, low: int = 1, high: int = 100):
-    #FIX: input validation (float, within range) using Claude Extension
-    if raw is None:
-        return False, None, "Enter a guess."
-
-    if raw == "":
-        return False, None, "Enter a guess."
-
-    if "." in raw:
-        return False, None, "Please enter a whole number, not a decimal."
-
-    try:
-        value = int(raw)
-    except Exception:
-        return False, None, "That is not a number."
-
-    if value < low or value > high:
-        return False, None, f"Please enter a number between {low} and {high}."
-
-    return True, value, None
 
 
 def check_guess(guess, secret):
@@ -96,9 +76,9 @@ st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
-# FIX: Attempt counter started at 1 
+#FIXME: Counter starts at 1
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 0
+    st.session_state.attempts = 1
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -136,7 +116,6 @@ with col2:
 with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
-# FIXME: New game 
 if new_game:
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(1, 100)
@@ -153,8 +132,7 @@ if st.session_state.status != "playing":
 if submit:
     st.session_state.attempts += 1
 
-    #FIX: input validation (range)
-    ok, guess_int, err = parse_guess(raw_guess, low, high)
+    ok, guess_int, err = parse_guess(raw_guess)
 
     if not ok:
         st.session_state.history.append(raw_guess)
